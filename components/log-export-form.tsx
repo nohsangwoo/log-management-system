@@ -9,16 +9,14 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
-import { Download, Eye, FileDown, Search } from "lucide-react"
+import { Eye, FileDown, Search } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { LogPreview } from "@/components/log-preview"
 import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { addDays } from "date-fns"
 import { DateRangePicker } from "@/components/date-range-picker"
-import { saveAs } from 'file-saver'
+import { downloadFile, generateFileContent } from "@/lib/document-utils"
 
 const exportFormSchema = z.object({
   templateId: z.string({
@@ -145,7 +143,7 @@ export function LogExportForm() {
       }
       
       // 파일 내용 생성 및 다운로드
-      const fileContent = await generateFileContent(logsToExport, template)
+      const fileContent = await generateFileContent(logsToExport, template, template.format)
       await downloadFile(fileName, fileContent, template.format)
       
       // 출력 이력 추가
@@ -172,53 +170,6 @@ export function LogExportForm() {
       })
     } finally {
       setIsExporting(false)
-    }
-  }
-  
-  // 파일 내용 생성 함수 수정
-  function generateFileContent(logs: LogEntry[], template: any) {
-    // 모든 형식에 대해 텍스트 내용 생성
-    return generateTextContent(logs, template);
-  }
-
-  // 텍스트 형식 생성
-  function generateTextContent(logs: LogEntry[], template: any) {
-    let content = `${template.name} 출력 문서\n\n`;
-    
-    // 헤더 추가
-    if (template.includeHeader && template.headerText) {
-      content += `${template.headerText}\n\n`;
-    }
-    
-    // 로그 내용 추가
-    logs.forEach((log, index) => {
-      content += `${index + 1}. ${log.title}\n`;
-      content += `작성일: ${new Date(log.createdAt).toLocaleDateString('ko-KR')}\n`;
-      content += `${log.content}\n\n`;
-    });
-    
-    // 푸터 추가
-    if (template.includeFooter && template.footerText) {
-      content += `\n${template.footerText}`;
-    }
-    
-    return content;
-  }
-
-  // 파일 다운로드 함수 수정
-  async function downloadFile(fileName: string, content: string | ArrayBuffer, format: string) {
-    try {
-      // 파일 확장자 추가
-      const fullFileName = `${fileName}.${format}`;
-      
-      // 모든 형식을 텍스트로 처리
-      const blob = new Blob([content as string], { type: 'text/plain' });
-      
-      // 파일 다운로드
-      saveAs(blob, fullFileName);
-    } catch (error) {
-      console.error('파일 다운로드 중 오류 발생:', error);
-      throw error;
     }
   }
 
