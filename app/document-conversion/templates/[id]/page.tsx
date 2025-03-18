@@ -8,12 +8,11 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Edit, Copy } from "lucide-react"
 import Link from "next/link"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export default function TemplateDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const { toast } = useToast()
   const templateId = params.id as string
 
   const getExportTemplate = useLogStore((state) => state.getExportTemplate)
@@ -54,18 +53,15 @@ export default function TemplateDetailPage() {
       delete (newTemplate as any).createdAt
 
       createExportTemplate(newTemplate)
-      toast({
-        title: "양식 복제됨",
+      toast.success("양식 복제됨", {
         description: "출력 양식이 성공적으로 복제되었습니다.",
       })
 
       router.push("/document-conversion?tab=templates")
     } catch (error) {
       console.error("양식 복제 중 오류 발생:", error)
-      toast({
-        title: "오류 발생",
+      toast.error("오류 발생", {
         description: "양식을 복제하는 중 문제가 발생했습니다.",
-        variant: "destructive",
       })
     }
   }

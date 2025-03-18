@@ -17,7 +17,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export function TemplateList() {
   const router = useRouter()
@@ -25,7 +25,6 @@ export function TemplateList() {
   const deleteTemplate = useLogStore((state) => state.deleteTemplate)
   const createTemplate = useLogStore((state) => state.createTemplate)
   const [templateToDelete, setTemplateToDelete] = useState<string | null>(null)
-  const { toast } = useToast()
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString("ko-KR", {
@@ -39,8 +38,7 @@ export function TemplateList() {
     if (templateToDelete) {
       deleteTemplate(templateToDelete)
       setTemplateToDelete(null)
-      toast({
-        title: "템플릿 삭제됨",
+      toast.success("템플릿 삭제됨", {
         description: "템플릿이 성공적으로 삭제되었습니다.",
       })
     }
@@ -61,16 +59,13 @@ export function TemplateList() {
       delete newTemplate.id
 
       createTemplate(newTemplate as any)
-      toast({
-        title: "템플릿 복제됨",
+      toast.success("템플릿 복제됨", {
         description: "템플릿이 성공적으로 복제되었습니다.",
       })
     } catch (error) {
       console.error("템플릿 복제 중 오류 발생:", error)
-      toast({
-        title: "오류 발생",
+      toast.error("오류 발생", {
         description: "템플릿을 복제하는 중 문제가 발생했습니다.",
-        variant: "destructive",
       })
     }
   }

@@ -9,11 +9,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Edit, MoreVertical, Trash, Copy, Eye } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export function ExportTemplateList() {
   const router = useRouter()
-  const { toast } = useToast()
   const templates = useLogStore((state) => state.exportTemplates)
   const deleteExportTemplate = useLogStore((state) => state.deleteExportTemplate)
   const createExportTemplate = useLogStore((state) => state.createExportTemplate)
@@ -28,8 +27,7 @@ export function ExportTemplateList() {
   const confirmDelete = () => {
     if (templateToDelete) {
       deleteExportTemplate(templateToDelete)
-      toast({
-        title: "양식 삭제됨",
+      toast.success("양식 삭제됨", {
         description: "출력 양식이 성공적으로 삭제되었습니다.",
       })
       setDeleteDialogOpen(false)
@@ -50,16 +48,13 @@ export function ExportTemplateList() {
         delete (newTemplate as any).createdAt
 
         createExportTemplate(newTemplate)
-        toast({
-          title: "양식 복제됨",
+        toast.success("양식 복제됨", {
           description: "출력 양식이 성공적으로 복제되었습니다.",
         })
       } catch (error) {
         console.error("양식 복제 중 오류 발생:", error)
-        toast({
-          title: "오류 발생",
+        toast.error("오류 발생", {
           description: "양식을 복제하는 중 문제가 발생했습니다.",
-          variant: "destructive",
         })
       }
     }

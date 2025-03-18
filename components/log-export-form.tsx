@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useToast } from "@/hooks/use-toast"
 import { Eye, FileDown, Search } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -17,6 +16,7 @@ import { z } from "zod"
 import { addDays } from "date-fns"
 import { DateRangePicker } from "@/components/date-range-picker"
 import { downloadFile, generateFileContent } from "@/lib/document-utils"
+import { toast } from "sonner"
 
 const exportFormSchema = z.object({
   templateId: z.string({
@@ -35,7 +35,6 @@ export function LogExportForm() {
   const logs = useLogStore((state) => state.logs)
   const exportTemplates = useLogStore((state) => state.exportTemplates)
   const addExportHistory = useLogStore((state) => state.addExportHistory)
-  const { toast } = useToast()
 
   const [selectedLogs, setSelectedLogs] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState<string>("")
@@ -133,10 +132,8 @@ export function LogExportForm() {
       
       if (logsToExport.length === 0) {
         console.log("출력할 일지 없음")
-        toast({
-          title: "출력할 일지 없음",
+        toast.error("출력할 일지 없음", {
           description: "선택한 기간이나 체크박스에서 출력할 일지가 없습니다.",
-          variant: "destructive",
         })
         setIsExporting(false)
         return
@@ -154,8 +151,7 @@ export function LogExportForm() {
         logIds: logsToExport.map(log => log.id)
       })
       
-      toast({
-        title: "문서 출력 완료",
+      toast.success("문서 출력 완료", {
         description: `${logsToExport.length}개의 일지가 성공적으로 출력되었습니다.`,
       })
       
@@ -163,10 +159,8 @@ export function LogExportForm() {
       setFileName(`일지_${new Date().toISOString().split('T')[0]}`)
     } catch (error) {
       console.error("문서 출력 중 오류 발생:", error)
-      toast({
-        title: "오류 발생",
+      toast.error("오류 발생", {
         description: "문서를 출력하는 중 문제가 발생했습니다.",
-        variant: "destructive",
       })
     } finally {
       setIsExporting(false)

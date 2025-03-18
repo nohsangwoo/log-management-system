@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog"
 import { FileUploader } from "@/components/file-uploader"
 import { Save, Plus, LayoutTemplateIcon as Template, CheckSquare, FileText, ArrowLeft, Trash2 } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 import Link from "next/link"
 
 interface LogFormProps {
@@ -32,7 +32,6 @@ interface LogFormProps {
 export function LogForm({ logId }: LogFormProps = {}) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { toast } = useToast()
 
   const templates = useLogStore((state) => state.templates)
   const draftLog = useLogStore((state) => state.draftLog)
@@ -120,8 +119,7 @@ export function LogForm({ logId }: LogFormProps = {}) {
       templateId: selectedTemplateId || undefined,
     })
 
-    toast({
-      title: "자동 저장됨",
+    toast.success("자동 저장됨", {
       description: "작성 중인 일지가 자동으로 저장되었습니다.",
       duration: 2000,
     })
@@ -185,10 +183,8 @@ export function LogForm({ logId }: LogFormProps = {}) {
 
   const handleSubmit = () => {
     if (!title.trim()) {
-      toast({
-        title: "제목을 입력하세요",
+      toast.error("제목을 입력하세요", {
         description: "일지 제목은 필수 항목입니다.",
-        variant: "destructive",
       })
       return
     }
@@ -197,10 +193,8 @@ export function LogForm({ logId }: LogFormProps = {}) {
     const uncheckedRequired = requiredItems.filter((item) => !item.checked)
 
     if (uncheckedRequired.length > 0) {
-      toast({
-        title: "필수 항목 확인",
+      toast.error("필수 항목 확인", {
         description: "필수 체크리스트 항목을 모두 체크해주세요.",
-        variant: "destructive",
       })
       return
     }
@@ -217,14 +211,12 @@ export function LogForm({ logId }: LogFormProps = {}) {
     try {
       if (logId) {
         updateLog(logId, logData)
-        toast({
-          title: "일지 업데이트 완료",
+        toast.success("일지 업데이트 완료", {
           description: "일지가 성공적으로 업데이트되었습니다.",
         })
       } else {
         const newLogId = createLog(logData as any)
-        toast({
-          title: "일지 작성 완료",
+        toast.success("일지 작성 완료", {
           description: "새 일지가 성공적으로 저장되었습니다.",
         })
         clearDraft()
@@ -233,10 +225,8 @@ export function LogForm({ logId }: LogFormProps = {}) {
       router.push("/log-entry")
     } catch (error) {
       console.error("일지 저장 중 오류 발생:", error)
-      toast({
-        title: "오류 발생",
+      toast.error("오류 발생", {
         description: "일지를 저장하는 중 문제가 발생했습니다. 다시 시도해주세요.",
-        variant: "destructive",
       })
     }
   }

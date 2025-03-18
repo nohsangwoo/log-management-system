@@ -26,6 +26,7 @@ export default function RootLayout({
             <div className="flex h-screen">
               <AppSidebar />
               <main className="flex-1 overflow-y-auto p-4">{children}</main>
+              <Toaster />
             </div>
           </SidebarProvider>
         </ThemeProvider>
@@ -37,3 +38,4 @@ export default function RootLayout({
 
 
 import './globals.css'
+import { Toaster } from "@/components/ui/sonner"

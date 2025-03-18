@@ -5,7 +5,7 @@ import type React from "react"
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Upload } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 interface FileUploaderProps {
   onUpload: (files: File[]) => void
@@ -25,7 +25,6 @@ export function FileUploader({
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   ],
 }: FileUploaderProps) {
-  const { toast } = useToast()
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -66,8 +65,7 @@ export function FileUploader({
     })
 
     if (invalidFiles.length > 0) {
-      toast({
-        title: "일부 파일을 업로드할 수 없습니다",
+      toast.error("일부 파일을 업로드할 수 없습니다", {
         description: (
           <ul className="list-disc pl-5 mt-2">
             {invalidFiles.map((item, index) => (
@@ -77,7 +75,6 @@ export function FileUploader({
             ))}
           </ul>
         ),
-        variant: "destructive",
       })
     }
 

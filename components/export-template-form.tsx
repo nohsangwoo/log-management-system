@@ -13,8 +13,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { useLogStore, type ExportTemplate } from "@/lib/store/log-store"
-import { useToast } from "@/hooks/use-toast"
-
+import { toast } from "sonner"
 const templateFormSchema = z.object({
   name: z.string().min(1, "양식 이름을 입력해주세요"),
   format: z.enum(["pdf", "docx", "xlsx"], {
@@ -36,7 +35,6 @@ interface ExportTemplateFormProps {
 
 export function ExportTemplateForm({ templateId }: ExportTemplateFormProps) {
   const router = useRouter()
-  const { toast } = useToast()
   const getExportTemplate = useLogStore((state) => state.getExportTemplate)
   const createExportTemplate = useLogStore((state) => state.createExportTemplate)
   const updateExportTemplate = useLogStore((state) => state.updateExportTemplate)
@@ -82,25 +80,21 @@ export function ExportTemplateForm({ templateId }: ExportTemplateFormProps) {
       if (templateId) {
         // 기존 템플릿 업데이트
         updateExportTemplate(templateId, data as ExportTemplate)
-        toast({
-          title: "양식 업데이트됨",
+        toast.success("양식 업데이트됨", {
           description: "출력 양식이 성공적으로 업데이트되었습니다.",
         })
       } else {
         // 새 템플릿 생성
         createExportTemplate(data as ExportTemplate)
-        toast({
-          title: "양식 생성됨",
+        toast.success("양식 생성됨", {
           description: "새 출력 양식이 성공적으로 생성되었습니다.",
         })
       }
       router.push("/document-conversion?tab=templates")
     } catch (error) {
       console.error("양식 저장 중 오류 발생:", error)
-      toast({
-        title: "오류 발생",
+      toast.error("오류 발생", {
         description: "양식을 저장하는 중 문제가 발생했습니다.",
-        variant: "destructive",
       })
     } finally {
       setIsLoading(false)

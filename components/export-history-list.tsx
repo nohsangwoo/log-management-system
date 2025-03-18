@@ -7,12 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Download, MoreVertical, Trash } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
-import { useToast } from "@/hooks/use-toast"
-import { saveAs } from 'file-saver'
 import { downloadFile, generateFileContent } from "@/lib/document-utils"
+import { toast } from "sonner"
 
 export function ExportHistoryList() {
-  const { toast } = useToast()
   const exportHistory = useLogStore((state) => state.exportHistory)
   const logs = useLogStore((state) => state.logs)
   const exportTemplates = useLogStore((state) => state.exportTemplates)
@@ -28,8 +26,7 @@ export function ExportHistoryList() {
   const confirmDelete = () => {
     if (historyToDelete) {
       deleteExportHistory(historyToDelete)
-      toast({
-        title: "출력 이력 삭제됨",
+      toast.success("출력 이력 삭제됨", {
         description: "출력 이력이 성공적으로 삭제되었습니다.",
       })
       setHistoryToDelete(null)
@@ -42,10 +39,8 @@ export function ExportHistoryList() {
       // 템플릿 찾기
       const template = exportTemplates.find(t => t.id === history.templateId)
       if (!template) {
-        toast({
-          title: "템플릿 없음",
+        toast.error("템플릿 없음", {
           description: "해당 출력 양식을 찾을 수 없습니다.",
-          variant: "destructive",
         })
         return
       }
@@ -53,10 +48,8 @@ export function ExportHistoryList() {
       // 로그 찾기
       const logsToExport = logs.filter(log => history.logIds.includes(log.id))
       if (logsToExport.length === 0) {
-        toast({
-          title: "일지 없음",
+        toast.error("일지 없음", {
           description: "출력할 일지를 찾을 수 없습니다.",
-          variant: "destructive",
         })
         return
       }
@@ -65,16 +58,13 @@ export function ExportHistoryList() {
       const content = await generateFileContent(logsToExport, template, history.format);
       await downloadFile(history.fileName.split('.')[0], content, history.format);
       
-      toast({
-        title: "다운로드 완료",
+      toast.success("다운로드 완료", {
         description: `${history.fileName} 파일이 다운로드되었습니다.`,
       })
     } catch (error) {
       console.error("다운로드 중 오류 발생:", error)
-      toast({
-        title: "오류 발생",
+      toast.error("오류 발생", {
         description: "파일을 다운로드하는 중 문제가 발생했습니다.",
-        variant: "destructive",
       })
     }
   }

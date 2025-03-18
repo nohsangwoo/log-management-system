@@ -19,7 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Save, Plus, ArrowLeft, Trash2 } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 import Link from "next/link"
 
 interface TemplateFormProps {
@@ -28,7 +28,6 @@ interface TemplateFormProps {
 
 export function TemplateForm({ templateId }: TemplateFormProps = {}) {
   const router = useRouter()
-  const { toast } = useToast()
 
   const getTemplate = useLogStore((state) => state.getTemplate)
   const createTemplate = useLogStore((state) => state.createTemplate)
@@ -79,19 +78,15 @@ export function TemplateForm({ templateId }: TemplateFormProps = {}) {
 
   const handleSubmit = () => {
     if (!name.trim()) {
-      toast({
-        title: "템플릿 이름을 입력하세요",
+      toast.error("템플릿 이름을 입력하세요", {
         description: "템플릿 이름은 필수 항목입니다.",
-        variant: "destructive",
       })
       return
     }
 
     if (checklistItems.length === 0) {
-      toast({
-        title: "체크리스트 항목을 추가하세요",
+      toast.error("체크리스트 항목을 추가하세요", {
         description: "최소 하나 이상의 체크리스트 항목이 필요합니다.",
-        variant: "destructive",
       })
       return
     }
@@ -105,14 +100,12 @@ export function TemplateForm({ templateId }: TemplateFormProps = {}) {
     try {
       if (templateId) {
         updateTemplate(templateId, templateData)
-        toast({
-          title: "템플릿 업데이트 완료",
+        toast.success("템플릿 업데이트 완료", {
           description: "템플릿이 성공적으로 업데이트되었습니다.",
         })
       } else {
         createTemplate(templateData as any)
-        toast({
-          title: "템플릿 생성 완료",
+        toast.success("템플릿 생성 완료", {
           description: "새 템플릿이 성공적으로 생성되었습니다.",
         })
       }
@@ -120,10 +113,8 @@ export function TemplateForm({ templateId }: TemplateFormProps = {}) {
       router.push("/checklists")
     } catch (error) {
       console.error("템플릿 저장 중 오류 발생:", error)
-      toast({
-        title: "오류 발생",
+      toast.error("오류 발생", {
         description: "템플릿을 저장하는 중 문제가 발생했습니다. 다시 시도해주세요.",
-        variant: "destructive",
       })
     }
   }

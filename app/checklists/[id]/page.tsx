@@ -8,11 +8,10 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { ArrowLeft, Edit, Copy } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export default function TemplateDetailPage() {
   const params = useParams()
-  const { toast } = useToast()
   const templateId = params.id as string
 
   const getTemplate = useLogStore((state) => state.getTemplate)
@@ -53,11 +52,9 @@ export default function TemplateDetailPage() {
       })),
     }
 
-    delete newTemplate.id
-
-    createTemplate(newTemplate as any)
-    toast({
-      title: "템플릿 복제됨",
+    const { id, ...templateWithoutId } = newTemplate;
+    createTemplate(templateWithoutId as any)
+    toast.success("템플릿 복제됨", {
       description: "템플릿이 성공적으로 복제되었습니다.",
     })
 

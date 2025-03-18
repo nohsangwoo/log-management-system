@@ -10,11 +10,10 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { ArrowLeft, Edit, FileText, Download } from "lucide-react"
 import { generatePDF } from "@/lib/pdf-generator"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export default function LogDetailPage() {
   const params = useParams()
-  const { toast } = useToast()
   const logId = params.id as string
 
   const getLog = useLogStore((state) => state.getLog)
@@ -55,10 +54,8 @@ export default function LogDetailPage() {
       const defaultTemplate = exportTemplates.find((t) => t.format === "pdf") || exportTemplates[0]
 
       if (!defaultTemplate) {
-        toast({
-          title: "출력 양식 없음",
+        toast.error("출력 양식 없음", {
           description: "PDF 출력을 위한 양식이 없습니다. 먼저 출력 양식을 생성해주세요.",
-          variant: "destructive",
         })
         return
       }
@@ -82,16 +79,13 @@ export default function LogDetailPage() {
       link.download = `${fileName}.pdf`
       link.click()
 
-      toast({
-        title: "PDF 다운로드 완료",
+      toast.success("PDF 다운로드 완료", {
         description: "일지가 PDF 형식으로 다운로드되었습니다.",
       })
     } catch (error) {
       console.error("PDF 생성 중 오류 발생:", error)
-      toast({
-        title: "오류 발생",
+      toast.error("오류 발생", {
         description: "PDF를 생성하는 중 문제가 발생했습니다. 다시 시도해주세요.",
-        variant: "destructive",
       })
     }
   }
