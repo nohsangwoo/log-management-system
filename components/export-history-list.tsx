@@ -458,9 +458,10 @@ async function generateDocxContent(logs: LogEntry[], template: any) {
 // XLSX 형식 생성
 async function generateXlsxContent(logs: LogEntry[], template: any) {
   try {
-    // 동적으로 xlsx 임포트
+    // 동적으로 xlsx 임포트 - 방식 수정
     const xlsxModule = await import('xlsx');
-    const XLSX = xlsxModule.default;
+    // xlsx 모듈은 ESM 구조에서 다르게 임포트될 수 있음
+    const XLSX = xlsxModule.default || xlsxModule;
     
     // 워크시트 데이터 구성
     const wsData = [
@@ -480,14 +481,25 @@ async function generateXlsxContent(logs: LogEntry[], template: any) {
     // 워크시트 생성
     const ws = XLSX.utils.aoa_to_sheet(wsData);
     
+    // 열 너비 설정
+    const wscols = [
+      { wch: 5 },    // No 컬럼 넓이
+      { wch: 30 },   // 제목 컬럼 넓이
+      { wch: 15 },   // 작성일 컬럼 넓이
+      { wch: 80 }    // 내용 컬럼 넓이
+    ];
+    ws['!cols'] = wscols;
+    
     // 워크북 생성
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, template.name);
     
     // XLSX 파일을 바이너리 데이터로 변환
-    return XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+    const buffer = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+    return buffer;
   } catch (error) {
     console.error('XLSX 생성 중 오류 발생:', error);
+    console.error('오류 상세:', error instanceof Error ? error.message : String(error));
     throw error;
   }
 }
