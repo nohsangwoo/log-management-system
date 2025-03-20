@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata = {
   title: "일지 관리 시스템",
   description: "자동화된 일지 관리 시스템",
-    generator: 'v0.dev'
+    generator: 'ludgi'
 }
 
 export default function RootLayout({
