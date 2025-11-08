@@ -69,6 +69,9 @@ type LogState = {
   exportTemplates: ExportTemplate[]
   exportHistory: ExportHistory[]
 
+  // 초기 데모 데이터 시딩
+  seedDemoData: () => void
+
   // 일지 관련 액션
   createLog: (log: Omit<LogEntry, "id" | "createdAt" | "updatedAt">) => string
   updateLog: (id: string, log: Partial<LogEntry>) => void
@@ -114,6 +117,100 @@ export const useLogStore = create<LogState>()(
       draftLog: null,
       exportTemplates: [],
       exportHistory: [],
+
+      seedDemoData: () => {
+        const state = get()
+        if (state.logs.length > 0 || state.templates.length > 0 || state.exportTemplates.length > 0) {
+          return
+        }
+
+        // 템플릿 생성
+        const templateDailyId = uuidv4()
+        const templateWeeklyId = uuidv4()
+        const templates: LogTemplate[] = [
+          {
+            id: templateDailyId,
+            name: "일일 점검 템플릿",
+            description: "일일 업무 점검을 위한 기본 체크리스트",
+            checklistItems: [
+              { id: uuidv4(), text: "금일 목표 확인", checked: false, required: true },
+              { id: uuidv4(), text: "핵심 작업 진행상황 업데이트", checked: false, required: true },
+              { id: uuidv4(), text: "리스크/이슈 기록", checked: false, required: false },
+            ],
+            createdAt: new Date(),
+          },
+          {
+            id: templateWeeklyId,
+            name: "주간 보고 템플릿",
+            description: "주간 실적/계획 보고용 체크리스트",
+            checklistItems: [
+              { id: uuidv4(), text: "주요 성과 요약", checked: false, required: true },
+              { id: uuidv4(), text: "다음 주 계획", checked: false, required: true },
+              { id: uuidv4(), text: "지원 필요 사항", checked: false, required: false },
+            ],
+            createdAt: new Date(),
+          },
+        ]
+
+        // 로그 샘플
+        const logs: LogEntry[] = [
+          {
+            id: uuidv4(),
+            title: "프론트엔드 성능 최적화 진행",
+            content: "이미지 최적화와 코드 스플리팅 적용. LCP 25% 개선.",
+            checklistItems: templates[0].checklistItems.map((i) => ({ ...i, id: uuidv4(), checked: i.required })),
+            templateId: templateDailyId,
+            attachments: [],
+            createdAt: new Date(Date.now() - 1000 * 60 * 60 * 18),
+            updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 12),
+            isDraft: false,
+          },
+          {
+            id: uuidv4(),
+            title: "주간 보고 - 45주차",
+            content: "신규 대시보드 배포 완료, 오류율 30% 감소. 다음 주 테스트 자동화 목표.",
+            checklistItems: templates[1].checklistItems.map((i) => ({ ...i, id: uuidv4(), checked: false })),
+            templateId: templateWeeklyId,
+            attachments: [],
+            createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48),
+            updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 24),
+            isDraft: false,
+          },
+        ]
+
+        // 출력 템플릿 샘플
+        const exportTemplates: ExportTemplate[] = [
+          {
+            id: uuidv4(),
+            name: "PDF 기본",
+            format: "pdf",
+            includeHeader: true,
+            includeFooter: true,
+            includeAttachments: true,
+            includeChecklist: true,
+            headerText: "일지 보고서",
+            footerText: "Confidential",
+            createdAt: new Date(),
+          },
+          {
+            id: uuidv4(),
+            name: "DOCX 표준",
+            format: "docx",
+            includeHeader: true,
+            includeFooter: false,
+            includeAttachments: false,
+            includeChecklist: true,
+            headerText: "Weekly Report",
+            createdAt: new Date(),
+          },
+        ]
+
+        set({
+          templates,
+          logs,
+          exportTemplates,
+        })
+      },
 
       createLog: (logData) => {
         const id = uuidv4()

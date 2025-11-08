@@ -10,20 +10,19 @@ export default function ChecklistsPage() {
   const router = useRouter()
 
   const handleNewTemplate = () => {
-    console.log("새 템플릿 만들기 버튼 클릭")
-    window.location.href = "/checklists/new"
+    router.push("/checklists/new")
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">체크리스트 템플릿</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">체크리스트 템플릿</h1>
         <Button onClick={handleNewTemplate}>
           <PlusCircle className="mr-2 h-4 w-4" />새 템플릿 만들기
         </Button>
       </div>
 
-      <Card>
+      <Card className="card-hover">
         <CardHeader>
           <CardTitle>템플릿 목록</CardTitle>
           <CardDescription>일지 작성에 사용할 체크리스트 템플릿을 관리하세요</CardDescription>

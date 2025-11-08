@@ -11,20 +11,19 @@ export default function LogEntryPage() {
   const router = useRouter()
 
   const handleNewLog = () => {
-    console.log("새 일지 작성 버튼 클릭")
-    window.location.href = "/log-entry/new"
+    router.push("/log-entry/new")
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">일지 관리</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">일지 관리</h1>
         <Button onClick={handleNewLog}>
           <PlusCircle className="mr-2 h-4 w-4" />새 일지 작성
         </Button>
       </div>
 
-      <Card>
+      <Card className="card-hover">
         <CardHeader>
           <CardTitle>일지 목록</CardTitle>
           <CardDescription>작성된 모든 일지를 확인하고 관리하세요</CardDescription>

@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -13,6 +9,10 @@ body {
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
@@ -85,10 +85,51 @@ body {
 }
 
 @layer base {
+  ::selection {
+    background-color: hsl(var(--primary) / 0.18);
+  }
+
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* 부드러운 카드 호버 */
+  .card-hover {
+    @apply transition-transform duration-300 ease-out will-change-transform;
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+  }
+
+  /* 은은한 배경 그리드 */
+  .bg-grid {
+    background-image:
+      radial-gradient(hsl(var(--border)) 1px, transparent 1px);
+    background-size: 16px 16px;
+    background-position: -1px -1px;
+  }
+
+  /* 스크롤바 스타일 (지원 브라우저에서만 적용) */
+  .nice-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.4) transparent;
+  }
+  .nice-scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  .nice-scrollbar::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.35);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .nice-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
