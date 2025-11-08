@@ -1,4 +1,5 @@
 import type React from "react"
+import { Suspense } from "react"
 import { Plus_Jakarta_Sans } from "next/font/google"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
@@ -38,7 +39,9 @@ export default function RootLayout({
           </div>
           <SidebarProvider>
             <div className="flex h-screen">
-              <AppSidebar />
+              <Suspense fallback={<div className="w-64 shrink-0 border-r bg-sidebar" />}>
+                <AppSidebar />
+              </Suspense>
               <main className="flex-1 overflow-y-auto p-6 md:p-8">
                 {children}
               </main>

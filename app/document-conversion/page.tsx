@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -12,6 +12,14 @@ import { LogExportForm } from "@/components/log-export-form"
 import { useLogStore } from "@/lib/store/log-store"
 
 export default function DocumentConversionPage() {
+  return (
+    <Suspense fallback={<div className="h-64 w-full animate-pulse rounded-md bg-muted" />}>
+      <DocumentConversionInner />
+    </Suspense>
+  )
+}
+
+function DocumentConversionInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const tabParam = searchParams.get("tab")
